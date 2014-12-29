@@ -676,6 +676,24 @@ class Struct
     return NULL;
   }
 
+  const mxArray* getField(const std::string& name, mwIndex ind = 0) const
+  {
+    const mxArray* ret = mxGetField(mx_ptr_, ind, name.c_str());
+    if(!ret)
+      mexError("invalid name: `%s'\n", name.c_str());
+
+    return ret;
+  }
+
+  mxArray* getField(const std::string& name, mwIndex ind = 0)
+  {
+    mxArray* ret = mxGetField(mx_ptr_, ind, name.c_str());
+    if(!ret)
+      mexError("invalid name: `%s'\n", name.c_str());
+
+    return ret;
+  }
+
   mxArray* release()
   {
     owns_ = false;
@@ -743,6 +761,48 @@ class Struct
 }; // Struct
 
 
+class Class
+{
+ public:
+  Class() : mx_ptr_(NULL), owns_(false) {}
+  ~Class() { free(); }
+
+  template <class C, typename std::enable_if<
+    (std::is_same<C, mxArray>::value), int>::type=0>
+  Class(C* c) : mx_ptr_(c), owns_(false) {
+    // massert(isClass(mx_ptr_)); TODO
+  }
+
+  template <class C, typename std::enable_if<
+    (std::is_same<C, const mxArray>::value), int>::type=0>
+  Class(C* c) : mx_ptr_(const_cast<mxArray*>(c)), owns_(false)
+    {
+      // massert(isClass(mx_ptr_)); TODO
+    }
+
+  inline const mxArray* operator[](const std::string& prop_name) const
+  {
+    // copies the data
+    return mxGetProperty(mx_ptr_, 0, prop_name.c_str());
+  }
+
+
+ protected:
+  inline void free()
+  {
+    if(owns_) {
+      mex::destroyArray(mx_ptr_);
+      owns_=false;
+    }
+  }
+
+ protected:
+  mxArray* mx_ptr_;
+  bool owns_;
+}; // Class
+
+
+
 // Based on
 // http://www.mathworks.com/matlabcentral/fileexchange/38964-example-matlab-class-wrapper-for-a-c++-class
 template <typename _T>
@@ -807,6 +867,21 @@ template <typename _T> void DeleteClass(const mxArray* a) {
 }
 
 }; // mex
+
+namespace std {
+template <typename T> inline
+const T* begin(const mex::Mat<T>& m) { return m.ptr(); }
+
+template <typename T> inline
+T* begin(mex::Mat<T>& m) { return m.ptr(); }
+
+template <typename T> inline
+const T* end(const mex::Mat<T>& m) { return (m.ptr()+m.length()); }
+
+template <typename T> inline
+T* end(mex::Mat<T>& m) { return (m.ptr()+m.length()); }
+}; // std
+
 
 #include "mexmat-inl.h"
 #include "mat-inl.h" // implementation of the Mat class
