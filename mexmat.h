@@ -389,6 +389,7 @@ template <typename _T = double>
 class Mat {
  public:
   typedef _T value_type;
+  //typedef _T Scalar;
 
  public:
   /** empty ctor creates an empty array */
@@ -716,6 +717,11 @@ class Struct
   Struct& operator()(const std::string& fname, mex::Mat<T>& m, mwSize ind = 0)
   {
     return set(fname, m, ind);
+  }
+
+  inline mwSize length() const
+  {
+    return mex::length(mx_ptr_);
   }
 
  protected:
