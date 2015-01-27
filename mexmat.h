@@ -322,6 +322,11 @@ mxArray* newMexMatrix(mwSize m, mwSize n, mxComplexity c) {
   return mxCreateNumericMatrix(m,n,traits_<_T>::type, c);
 }
 
+template <typename _T = double, mxComplexity c = mxREAL> inline
+mxArray* newEmptyMexMatrix() {
+  return mxCreateNumericMatrix(0, 0, traits_<_T>::type, c);
+}
+
 template <typename _T = double> inline
 mxArray* newMexMatrixNoInit(mwSize m, mwSize n, mxComplexity c) {
   mxArray* data = newMexMatrix<_T>(0, 0, c);
@@ -357,6 +362,7 @@ template <typename _T = double> inline
 mxArray* newMexMatrix(mwSize ndims, const mwSize* dims, mxComplexity c=mxREAL) {
   return mxCreateNumericArray(ndims, dims, traits_<_T>::type, c);
 }
+
 
 inline void destroyArray(mxArray*& a) {
   if(a) { mxDestroyArray(a); a = NULL; }
