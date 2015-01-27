@@ -9,8 +9,8 @@ TOP_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
 #
 # edit this to your Matlab installation path if needed
 #
-MATLAB_ROOT = $(shell $(MEX) -v 2>&1 | sed -n 's/.*MATLAB *= *\(.*\)/\1/gp')
-#MATLAB_ROOT = /usr/local/MATLAB/R2013b
+#MATLAB_ROOT = $(shell $(MEX) -v 2>&1 | sed -n 's/.*MATLAB *= *\(.*\)/\1/gp')
+MATLAB_ROOT = /usr/local/MATLAB/R2014a/
 
 ###### the rest should work without modifications ######
 MEX 	    = mex

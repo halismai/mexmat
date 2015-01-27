@@ -26,7 +26,7 @@
 namespace mex {
 
 template <typename _T>
-Mat<_T>::Mat() : mx_ptr_(newMexMatrix<_T>(0,0)), owns_(true) {}
+Mat<_T>::Mat() : mx_ptr_(newMexMatrixNoInit<_T>(0,0)), owns_(true) {}
 
 template <typename _T>
 Mat<_T>::Mat(Mat&& m) : mx_ptr_(m.mx_ptr_), owns_(m.owns_) {
@@ -71,13 +71,15 @@ Mat<_T>& Mat<_T>::operator=(const Mat<_T>& m)
   return *this;
 }
 
+#if 0
 template <typename _T>
-Mat<_T>& Mat<_T>::operator=(Mat m)
+Mat<_T>& Mat<_T>::operator=(Mat&& m)
 {
   std::swap(mx_ptr_, m.mx_ptr_);
   std::swap(owns_, m.owns_);
   return *this;
 }
+#endif
 
 template <typename _T>
 void Mat<_T>::free()

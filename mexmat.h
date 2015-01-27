@@ -428,8 +428,10 @@ class Mat {
   /** assigment */
   Mat& operator=(const Mat&);
 
+#if 0
   /** assignment */
-  Mat& operator=(Mat);
+  Mat& operator=(Mat&&);
+#endif
 
   /** destructor, frees memory if owned */
   ~Mat() { free(); }
@@ -680,8 +682,9 @@ class Struct
   const mxArray* getField(const std::string& name, mwIndex ind = 0) const
   {
     const mxArray* ret = mxGetField(mx_ptr_, ind, name.c_str());
+    /*
     if(!ret)
-      mexError("invalid name: `%s'\n", name.c_str());
+      mexError("invalid name: `%s'\n", name.c_str());*/
 
     return ret;
   }
@@ -689,10 +692,17 @@ class Struct
   mxArray* getField(const std::string& name, mwIndex ind = 0)
   {
     mxArray* ret = mxGetField(mx_ptr_, ind, name.c_str());
+    /*
     if(!ret)
       mexError("invalid name: `%s'\n", name.c_str());
+      */
 
     return ret;
+  }
+
+  bool hasField(const std::string& name, mwIndex ind = 0)
+  {
+    return NULL != mxGetField(mx_ptr_, ind, name.c_str());
   }
 
   mxArray* release()
