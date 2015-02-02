@@ -49,7 +49,7 @@ Mat<_T>::Mat(mwSize m, mwSize n, mwSize k, mxComplexity c) :
 template <typename _T>
 Mat<_T>::Mat(const std::vector<_T>& vals) :
     mx_ptr_(newMexMatrix<_T>(vals.size(),1)), owns_(true)
-{ memcpy(this->data(), &vals[0], sizeof(_T)*vals.size()); }
+{ memcpy(this->data(), vals.data(), sizeof(_T)*vals.size()); }
 
 template <typename _T>
 Mat<_T>::Mat(mwSize nd, const mwSize* dims) :

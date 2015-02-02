@@ -303,7 +303,7 @@ class size {
 
 template <typename _T = double, mxComplexity C = mxREAL> inline
 mxArray* newMexMatrix(mwSize m, mwSize n) {
-  	return mxCreateNumericMatrix(m,n,traits_<_T>::type,C);
+  return mxCreateNumericMatrix(m,n,traits_<_T>::type,C);
 }
 
 template <typename _T = double, mxComplexity C = mxREAL> inline
@@ -550,12 +550,28 @@ class Mat {
   using EigenConstMap = Eigen::Map< const EigenMatrix<__T, __Rows, __Cols, __Opts> >;
 
   // assume col order in Eigen
-  inline EigenMap<_T> toEigen() {
+  inline EigenMap<_T> toEigenMap() {
     return EigenMap<_T>( ptr(), rows(), cols() );
   }
 
-  inline EigenConstMap<_T> toEigen() const {
+  inline EigenConstMap<_T> toEigenMap() const {
     return EigenConstMap<_T>(ptr(), rows(), cols());
+  }
+
+  inline EigenMatrix<_T> toEigen() const {
+    EigenMatrix<_T> ret(rows(), cols());
+    memcpy(ret.data(), this->data(), rows()*cols()*sizeof(_T));
+    return ret;
+  }
+
+  template <int _Rows, int _Cols> inline
+  EigenMatrix<_T, _Rows, _Cols> toEigenFixed() const {
+    massert( _Rows == rows() && _Cols == cols() );
+
+    EigenMatrix<_T, _Rows, _Cols> ret;
+    memcpy(ret.data(), this->data(), _Rows*_Cols*sizeof(_T));
+
+    return ret;
   }
 #endif
 
