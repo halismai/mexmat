@@ -60,7 +60,7 @@ inline void nargchk(int lo, int hi, int n, const std::string& msg="") {
 
 /** \return a string from the array. mex class must be mxCHAR_CLASS, otherwise
  * the function asserts */
-std::string getString(const mxArray* a);
+inline std::string getString(const mxArray* a);
 
 template <typename _T> inline _T* malloc(mwSize n) {
   return static_cast<_T*>(mxMalloc(n*sizeof(_T)));
@@ -315,7 +315,7 @@ mxArray* newMexMatrixNoInit(mwSize m, mwSize n) {
   return data;
 }
 
-mxArray* newMexCell(mwSize nr, mwSize nc) { return mxCreateCellMatrix(nr,nc); }
+inline mxArray* newMexCell(mwSize nr, mwSize nc) { return mxCreateCellMatrix(nr,nc); }
 
 template <typename _T = double> inline
 mxArray* newMexMatrix(mwSize m, mwSize n, mxComplexity c) {
@@ -389,7 +389,7 @@ inline void unlock() { mexUnlock(); }
 
 inline int atexit(void (*fn)(void)) { return mexAtExit(fn); }
 
-std::string id2string(mxClassID);
+inline std::string id2string(mxClassID);
 
 template <typename _T = double>
 class Mat {
@@ -743,6 +743,15 @@ class Struct
   inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwSize ind =0)
   {
     return set(fname, m.release(), ind);
+  }
+
+  template <typename T>
+  inline Struct& set(const std::string& fname, const T& value, mwSize ind = 0)
+  {
+    mex::Mat<T> V(1, 1);
+    V[0] = value;
+
+    return set(fname, V, ind);
   }
 
   template <typename T> inline
