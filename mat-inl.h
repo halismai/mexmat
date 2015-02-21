@@ -98,6 +98,36 @@ inline std::ostream& operator<<(std::ostream& os, const Mat<char>& m)
   return os;
 }
 
+inline MatlabInput::MatlabInput(int nrhs, mxArray const* prhs[])
+    : _nrhs(nrhs), _prhs(prhs) {}
+
+inline mxArray const* MatlabInput::get(int i) const
+{
+  valid_index_or_error(i);
+  return _prhs[i];
+}
+
+inline void MatlabInput::valid_index_or_error(int i) const
+{
+  if(i < 0 || i >= size())
+    mexError("index '%d' is out of ouf bound [%d]\n", i, size());
+}
+
+inline MatlabOutput::MatlabOutput(int nlhs, mxArray* plhs[])
+    : _nlhs(nlhs), _plhs(plhs) {}
+
+inline void MatlabOutput::set(int i, mxArray* p)
+{
+  valid_index_or_error(i);
+  _plhs[i] = p;
+}
+
+inline void MatlabOutput::valid_index_or_error(int i) const
+{
+  if(i < 0 || i >= size())
+    mexError("index '%d' is out of bounds [%d]\n", i, size());
+}
+
 }; // mex
 
 #endif // MEXMAT_MEXMAT_MAT_INL_H

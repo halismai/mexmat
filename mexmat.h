@@ -913,6 +913,142 @@ template <typename _T> void DeleteClass(const mxArray* a) {
   mex::unlock();
 }
 
+template <int> class MatlabInputFixed;
+template <int, int> class MatlabInputFixedRange;
+
+class MatlabInput
+{
+ public:
+  explicit MatlabInput(int nrhs, mxArray const* prhs[]);
+
+  inline int size() const { return _nrhs; }
+
+  inline mxArray const* get(int i) const;
+
+  template <class Mat> inline
+  const Mat get(int i) const { return Mat(get(i)); }
+
+  template <class Mat> inline
+  const Mat operator[](int i) const { return get(i); }
+
+  template <int N, class Mat> inline
+  const Mat operator()() const { return get(N); }
+
+  template <int N, class Mat> inline
+  const Mat get() const { return get(N); }
+
+  template <int N> inline
+  mxArray const* get() const { return get(N); }
+
+  inline MatlabInput(const MatlabInput&&) = delete;
+  inline MatlabInput& operator=(const MatlabInput&) = delete;
+
+ private:
+  int _nrhs;
+  mxArray const** _prhs;
+
+ private:
+  inline void valid_index_or_error(int) const;
+}; // MatlabInputFixed
+
+template <int N>
+class MatlabInputFixed : public MatlabInput
+{
+ public:
+  explicit inline MatlabInputFixed(int nrhs, mxArray const* prhs[],
+                                   std::string usage = "")
+      : MatlabInput(nrhs, prhs)
+  {
+    if(N != nrhs) {
+      mexError("expected %d outputs [got %d] %s\n", N, nrhs,
+               (!usage.empty() ? std::string("\nUSAGE: " + usage).c_str() : ""));
+    }
+  }
+}; // MatlabInputFixed
+
+template <int N_min, int N_max>
+class MatlabInputFixedRange : public MatlabInput
+{
+  static_assert( N_min <= N_max, "bad range" );
+
+ public:
+  explicit inline MatlabInputFixedRange(int nrhs, mxArray const* prhs[],
+                                         std::string usage="")
+      : MatlabInput(nrhs, prhs)
+  {
+    if(nrhs < N_min || nrhs > N_max)
+      mexError("expected input to be between %d and %d, but got %d %s\n",
+               N_min, N_max, nrhs,
+               (!usage.empty() ? (std::string("\nUSAGE: " + usage).c_str()) : ""));
+  }
+
+}; // MatlabInputFixedRange
+
+template <int> class MatlabOutputFixed;
+template <int, int> class MatlabOutputFixedRange;
+
+class MatlabOutput
+{
+ public:
+  explicit MatlabOutput(int nlhs, mxArray* plhs[]);
+
+  inline int size() const { return _nlhs; }
+
+  // set output at 'i'
+  // will cause an error if index is out of bounds
+  template <class Mat> inline
+  void set(int i, Mat&& m) { set(i, m.release()); }
+
+  void set(int i, mxArray* p);
+
+  template <int N> inline void set(mxArray* out) { set(N, out); }
+  template <int N, class Mat> inline void set(Mat&& m) { set(N, m); }
+
+  // disable copy and assignment
+  inline MatlabOutput(const MatlabOutput&) = delete;
+  inline MatlabOutput& operator=(const MatlabOutput&) = delete;
+
+ private:
+  int _nlhs;
+  mxArray** _plhs;
+
+ private:
+  inline void valid_index_or_error(int) const;
+}; //  MatlabOutput
+
+template <int N>
+class MatlabOutputFixed : public MatlabOutput
+{
+ public:
+  explicit inline MatlabOutputFixed(int nlhs, mxArray* plhs[],
+                                    std::string usage = "")
+      : MatlabOutput(nlhs, plhs)
+  {
+    if(N != nlhs)
+      mexError("expected %d outputs [got %d] %s\n", N, nlhs,
+               (!usage.empty() ? std::string("\nUSAGE: " + usage).c_str() : ""));
+  }
+}; // MatlabOutput
+
+template <int N_min, int N_max>
+class MatlabOutputFixedRange : public MatlabOutput
+{
+  static_assert( N_min <= N_max, "bad range" );
+
+ public:
+  explicit inline MatlabOutputFixedRange(int nlhs, mxArray* plhs[],
+                                         std::string usage = "")
+      : MatlabOutput(nlhs, plhs)
+  {
+    if(nlhs < N_min || nlhs > N_max)
+      mexError("expected output to be between %d and %d, but got %d %s\n",
+               N_min, N_max, nlhs,
+               (!usage.empty() ? (std::string("\nUSAGE: " + usage).c_str()) : ""));
+  }
+}; // MatlabOutputFixedRange
+
+
+
 }; // mex
 
 namespace std {
