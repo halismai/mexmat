@@ -68,50 +68,17 @@ This way everything is transparent to the user.
 
 *NOTE* ***IMPORTANT*** the Matlab class than you want to use to access the C++ pointer
 must inherit from Matlab's 'handle' base class. This makes the class 'by
-reference' instead of 'by value.' If you you have a value class, every
-instantiation of the class will create a new C++ handle without deleting the
-old one. Typically, when forgetting the handle part you will get segfaults and
-undesirable side effects that are not easy to diagnose or debug.
+## Acknowlegments
 
-
-## Working with other libraries
-
-### Eigen
-If you have Eigen installed you can compile with `-DMEXMAT_WITH_EIGEN`.
-This will enable conversion to/from Eigen types. For example:
-
-```cpp
-Eigen::Matrix<double, 3, 3> M_eigen;
-mex::Mat<double> M(M_eigen); // will copy the data for you
-
-// retuns a map (no copy)
-auto M_eigen_map = M.toEigenMap();
-
-// for fixed sized matrices, the ones you know their dimension at run time,
-// you can do:
-auto M_eigen_map = M.toEigenFixed<3,3>();
+``
+ This code release was made possible by NPRP grant # 09-980-2-380 from the Qatar
+ National Research Fund (a member of Qatar Foundation). The statements made
+ herein are solely the responsibility of the author[s].
 ```
 
-### OpenCV
+Contributions:
 
-Compile with `-DMEXMAT_WITH_OPENCV`. This currently supports opencv2.4. Code has
-been tested with single channel images. Relevant code can be found in
-`mexmat-cv.h`, which will be included automatically from `mexmat.h`
-
-For example:
-
-```cpp
-//
-// get an image from Matlab and convert it to an opencv Mat
-//
-const mex::Mat<uint8_t> I_mex(prhs[0]);
-cv::Mat I_cv = mex::mex2cv(I_mex); // this will copy the image
-
-//
-// after some opencv processing
-//
-plhs[0] = mex::cv2mexarray(I_cv);
-// or
-// plhs[0] = mex::cv2mex(I_cv).release();
-```
+- Brett Browing
+- Muhammad Emad
+- Peter Hansen
 
