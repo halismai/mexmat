@@ -70,7 +70,7 @@ This way everything is transparent to the user.
 must inherit from Matlab's 'handle' base class. This makes the class 'by
 ## Acknowlegments
 
-``
+```
  This code release was made possible by NPRP grant # 09-980-2-380 from the Qatar
  National Research Fund (a member of Qatar Foundation). The statements made
  herein are solely the responsibility of the author[s].
