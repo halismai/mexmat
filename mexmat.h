@@ -1069,5 +1069,9 @@ T* end(mex::Mat<T>& m) { return (m.ptr()+m.length()); }
 #include "mexmat-inl.h"
 #include "mat-inl.h" // implementation of the Mat class
 
+#if defined(MEXMAT_WITH_OPENCV)
+#include "mexmat-cv.h"
+#endif
+
 #endif // MEXMAT_MEXMAT_H
 
