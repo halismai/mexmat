@@ -98,7 +98,7 @@ inline const mwSize* dims(const mxArray* a) { return mxGetDimensions(a); }
  * If the matrix does not have the specified dimension, the function returns 0
  */
 template <mwSize _D> inline mwSize dim(const mxArray* a) {
-  return (ndims(a) > _D) ? dims(a)[_D] : 0;
+  return (ndims(a) > _D) ? dims(a)[_D] : 1;
 }
 
 inline bool isComplex (const mxArray* a) { return mxIsComplex(a); }
