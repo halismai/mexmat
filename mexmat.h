@@ -636,6 +636,11 @@ class Cell {
 
   inline void set(mwIndex ii, mxArray* a) { mxSetCell(mx_ptr_, ii, a); }
 
+  template <typename T>
+  inline void set(mwIndex ii, mex::Mat<T>& m) {
+    return set(ii, m.release());
+  }
+
   inline mxArray* release() { owns_=false; return mx_ptr_; }
 
   inline mwSize length() const { return mex::length(mx_ptr_); }
