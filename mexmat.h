@@ -727,7 +727,7 @@ class Struct
     return ret;
   }
 
-  bool hasField(const std::string& name, mwIndex ind = 0)
+  bool hasField(const std::string& name, mwIndex ind = 0) const
   {
     return NULL != mxGetField(mx_ptr_, ind, name.c_str());
   }
