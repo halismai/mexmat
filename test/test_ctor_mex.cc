@@ -9,4 +9,5 @@ void mexFunction(int nlhs, mxArray* plhs[],
 
   ret.set("X", mex::Mat<double>(X));
   plhs[0] = ret.release();
+
 }

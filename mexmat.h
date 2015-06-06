@@ -662,7 +662,7 @@ class Cell {
   }
 
   template <typename T> inline
-  Cell& set(mwIndex ii, mex::Mat<T> m) {
+  Cell& set(mwIndex ii, mex::Mat<T>&& m) {
     return set(ii, m.release());
   }
 
@@ -783,7 +783,7 @@ class Struct
   }
 
   template <typename T>
-  inline Struct& set(const std::string& fname, mex::Mat<T> m, mwSize ind = 0)
+  inline Struct& set(const std::string& fname, mex::Mat<T>&& m, mwSize ind = 0)
   {
     return set(fname, m.release(), ind);
   }
@@ -794,7 +794,7 @@ class Struct
     mex::Mat<T> V(1, 1);
     V[0] = value;
 
-    return set(fname, V, ind);
+    return set(fname, V.release(), ind);
   }
 
   template <typename T> inline
