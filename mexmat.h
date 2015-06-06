@@ -651,11 +651,26 @@ class Cell {
     return mxGetCell(mx_ptr_, ii);
   }
 
-  inline void set(mwIndex ii, mxArray* a) { mxSetCell(mx_ptr_, ii, a); }
+  inline Cell& set(mwIndex ii, mxArray* a) {
+    mxSetCell(mx_ptr_, ii, a);
+    return *this;
+  }
 
-  template <typename T>
-  inline void set(mwIndex ii, mex::Mat<T>& m) {
+  template <typename T> inline
+  Cell& set(mwIndex ii, mex::Mat<T>& m) {
     return set(ii, m.release());
+  }
+
+  template <typename T> inline
+  Cell& set(mwIndex ii, mex::Mat<T> m) {
+    return set(ii, m.release());
+  }
+
+  template <typename T> inline
+  Cell& set(mwIndex ii, const T& value) {
+    mex::Mat<T> V(1,1);
+    V[0] = value;
+    return set(ii, V.release());
   }
 
   inline mxArray* release() { owns_=false; return mx_ptr_; }
