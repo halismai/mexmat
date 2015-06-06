@@ -30,7 +30,7 @@ Mat<_T>::Mat() : mx_ptr_(newEmptyMexMatrix<_T, mxREAL>()), owns_(true) {}
 
 template <typename _T>
 Mat<_T>::Mat(Mat&& m) : mx_ptr_(m.mx_ptr_), owns_(m.owns_) {
-  m.owns_ = false;
+  mex::printf("move\n");
 }
 
 template <typename _T>

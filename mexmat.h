@@ -53,6 +53,8 @@ static inline void massert(bool cond, const std::string& msg="") {
   if(!cond) mexError(msg.c_str());
 }
 
+#define MEXMAT_ASSERT(cond, msg) mex::massert(cond, __FILE__ ":" __LINE__  + msg)
+
 /** asserts if number of args n is less than lo or greater than hi */
 inline void nargchk(int lo, int hi, int n, const std::string& msg="") {
   massert(n>=lo && n<=hi, msg.empty() ? "wrong number of args" : msg);
@@ -527,6 +529,15 @@ class Mat {
   operator const  mxArray*() const { return mx_ptr_; }
   //operator      mxArray*()       { return mx_ptr_; }  // const cast only
 
+  inline std::vector<_T> toStdVector() const {
+    mex::massert(mex::isVector(*this), "input matrix is not a vector");
+
+    std::vector<_T> ret(this->length());
+    memcpy(ret.data(), this->data(), this->length()*sizeof(_T));
+    return ret;
+  }
+
+
 #if defined(MEXMAT_WITH_EIGEN)
   template <
      typename __T,
@@ -591,6 +602,12 @@ template <typename T1, typename T2> inline
 void assertSize(const mex::Mat<T1>& a, const mex::Mat<T2>& b,
                 const std::string& msg) {
   mex::massert( a.rows()==b.rows() && a.cols()==b.cols(), msg );
+}
+
+template <typename T> inline
+std::vector<T> toStdVector(const mex::Mat<T>& M)
+{
+  return M.toStdVector();
 }
 
 
@@ -746,6 +763,12 @@ class Struct
 
   template <typename T>
   inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwSize ind =0)
+  {
+    return set(fname, m.release(), ind);
+  }
+
+  template <typename T>
+  inline Struct& set(const std::string& fname, mex::Mat<T> m, mwSize ind = 0)
   {
     return set(fname, m.release(), ind);
   }

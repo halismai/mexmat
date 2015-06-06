@@ -25,5 +25,4 @@ void mexFunction(int nlhs, mxArray* plhs[],
   ss.set("f1", f1_val);
 
   plhs[0] = ss.release();
-
 }
