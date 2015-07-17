@@ -29,6 +29,7 @@
 #include <ostream>
 #include <cstdio>
 #include <map>
+#include <type_traits>
 
 namespace mex {
 
@@ -452,6 +453,22 @@ class Mat {
     memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
             * sizeof(typename __EigenMatrix::Scalar));
   }
+
+  template <class __EigenMatrix>
+  Mat(const __EigenMatrix&& mat) :
+      Mat<typename __EigenMatrix::Scalar>(mat.rows(), mat.cols())
+  {
+    memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
+            * sizeof(typename __EigenMatrix::Scalar));
+  }
+
+  template <class __EigenMatrix>
+  Mat(const Eigen::Ref<__EigenMatrix> mat) :
+      Mat<typename __EigenMatrix::Scalar>(mat.rows(), mat.cols())
+  {
+    memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
+            * sizeof(typename __EigenMatrix::Scalar));
+  }
 #endif
 
  public:  /* static stuff */
@@ -581,6 +598,16 @@ class Mat {
 
     EigenMatrix<_T, _Rows, _Cols> ret;
     memcpy(ret.data(), this->data(), _Rows*_Cols*sizeof(_T));
+
+    return ret;
+  }
+
+  template <int _Rows> inline
+  EigenMatrix<_T, _Rows, Eigen::Dynamic> toEigenFixedRows() const {
+    massert( _Rows == rows() );
+
+    EigenMatrix<_T, _Rows, Eigen::Dynamic> ret(_Rows, cols());
+    memcpy(ret.data(), this->data(), _Rows*cols()*sizeof(_T));
 
     return ret;
   }
@@ -726,7 +753,6 @@ class Struct
     setData();
   }
 
-
   const mxArray* operator[](const std::string& name) const
   {
     try {
@@ -849,6 +875,83 @@ class Struct
 
   std::vector<std::string> _field_names; //
 }; // Struct
+
+
+/**
+ * utiltiy function to get a numeric/string variable from a struct.
+ *
+ * This is useful, for example, when using a matlab struct as a means to pass
+ * options to algorithms.
+ *
+ * \param src     the source struct
+ * \param name    the variable name
+ * \param dst     output destination
+ * \param index   index in the struct
+ *
+ * \return true  if the variable name was found in the struct
+ */
+template <typename T_> inline
+bool GetVarOptional(const mex::Struct& src, std::string name, T_& dst, mwIndex idx=0)
+{
+  static_assert(std::is_arithmetic<T_>::value,
+                "GetVarOptional: type must be arithmetic");
+
+  if(src.hasField(name)) {
+    dst = mex::getNumber<T_>(src.getField(name, idx));
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/** specialization for string */
+template<> inline bool
+GetVarOptional<std::string>(const mex::Struct& src, std::string name,
+                            std::string& dst, mwIndex idx)
+{
+  if(src.hasField(name)) {
+    dst = mex::getString(src.getField(name, idx));
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Same as GetVarOptional but assigns the supplied default value to 'dst' if it
+ * does not exist in the Struct
+ *
+ */
+template <typename T_> inline
+bool GetVarOptionalWithDefault(const mex::Struct& src, std::string name,
+                               T_& dst, T_ default_val, mwIndex idx = 0)
+{
+  static_assert(std::is_arithmetic<T_>::value,
+                "GetVarOptionalWithDefault: type must be arithmetic");
+
+  if(src.hasField(name)) {
+    dst = mex::getNumber<T_>(src.getField(name, idx));
+    return true;
+  } else {
+    dst = default_val;
+    return false;
+  }
+}
+
+/** specialization for string */
+template<> inline bool
+GetVarOptionalWithDefault<std::string>(const mex::Struct& src, std::string name,
+                                       std::string& dst, std::string default_val,
+                                       mwIndex idx)
+{
+  if(src.hasField(name)) {
+    dst = mex::getString(src.getField(name, idx));
+    return true;
+  } else {
+    dst = default_val;
+    return false;
+  }
+}
 
 
 class Class

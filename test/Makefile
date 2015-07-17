@@ -12,7 +12,7 @@ all: $(patsubst %.cc,%.$(MEX_SUFFIX), $(MEX_SRC))
 %.o: %.cc
 	$(CXX) $(CXX_FLAGS) -c $^
 
-clean::
+clean:
 	rm -rf *.o *.$(MEX_SUFFIX)
 
 
