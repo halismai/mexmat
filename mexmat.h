@@ -65,6 +65,11 @@ inline void nargchk(int lo, int hi, int n, const std::string& msg="") {
  * the function asserts */
 inline std::string getString(const mxArray* a);
 
+/** \return a string */
+inline mxArray* createString(const std::string& str);
+
+template <typename _T> inline mxArray* valueToMxArray(const _T& value);
+
 template <typename _T> inline _T* malloc(mwSize n) {
   return static_cast<_T*>(mxMalloc(n*sizeof(_T)));
 }
@@ -803,28 +808,25 @@ class Struct
   }
 
   template <typename T>
-  inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwSize ind =0)
+  inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwIndex ind =0)
   {
     return set(fname, m.release(), ind);
   }
 
   template <typename T>
-  inline Struct& set(const std::string& fname, mex::Mat<T>&& m, mwSize ind = 0)
+  inline Struct& set(const std::string& fname, mex::Mat<T>&& m, mwIndex ind = 0)
   {
     return set(fname, m.release(), ind);
   }
 
   template <typename T>
-  inline Struct& set(const std::string& fname, const T& value, mwSize ind = 0)
+  inline Struct& set(const std::string& fname, const T& value, mwIndex ind = 0)
   {
-    mex::Mat<T> V(1, 1);
-    V[0] = value;
-
-    return set(fname, V.release(), ind);
+    return set(fname, valueToMxArray(value), ind);
   }
 
   template <typename T> inline
-  Struct& operator()(const std::string& fname, mex::Mat<T>& m, mwSize ind = 0)
+  Struct& operator()(const std::string& fname, mex::Mat<T>& m, mwIndex ind = 0)
   {
     return set(fname, m, ind);
   }

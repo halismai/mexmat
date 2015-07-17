@@ -26,7 +26,7 @@
 
 namespace mex {
 
-std::string getString(const mxArray* a)
+inline std::string getString(const mxArray* a)
 {
   assertType<char>(a);
 
@@ -43,7 +43,28 @@ std::string getString(const mxArray* a)
   return ret;
 }
 
-std::string id2string(mxClassID id)
+inline mxArray* createString(const std::string& string)
+{
+  return mxCreateString(string.c_str());
+}
+
+template <typename T> inline
+mxArray* valueToMxArray(const T& value)
+{
+  static_assert( std::is_arithmetic<T>::value,
+                "valueToMxArray: value must be arithmetic");
+
+  mex::Mat<T> ret(1,1);
+  ret[0] = value;
+  return ret.release();
+}
+
+template <> inline mxArray* valueToMxArray<std::string>(const std::string& s)
+{
+  return createString(s);
+}
+
+inline std::string id2string(mxClassID id)
 {
   switch(id)
   {
