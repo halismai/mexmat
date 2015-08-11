@@ -523,7 +523,8 @@ class Mat {
 
   inline mwSize sub2ind(mwSize r, mwSize c) const { return r + c*rows(); }
   inline mwSize sub2ind(mwSize r, mwSize c, mwSize k) const {
-    return (r*cols()+c)*depth()+k ;
+    //return (r*cols()+c)*depth()+k ;
+    return (rows()*cols()*k) + sub2ind(r, c);
   }
 
   /** relinquishes ownership of the pointer */
@@ -616,6 +617,7 @@ class Mat {
 
     return ret;
   }
+
 #endif
 
   template <typename __T>
