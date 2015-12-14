@@ -452,7 +452,7 @@ class Mat {
 
 #if defined(MEXMAT_WITH_EIGEN)
   template <class __EigenMatrix>
-  Mat(const __EigenMatrix& mat) :
+  explicit Mat(const __EigenMatrix& mat) :
       Mat<typename __EigenMatrix::Scalar>(mat.rows(), mat.cols())
   {
     memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
@@ -460,7 +460,7 @@ class Mat {
   }
 
   template <class __EigenMatrix>
-  Mat(const __EigenMatrix&& mat) :
+  explicit Mat(const __EigenMatrix&& mat) :
       Mat<typename __EigenMatrix::Scalar>(mat.rows(), mat.cols())
   {
     memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
@@ -468,7 +468,7 @@ class Mat {
   }
 
   template <class __EigenMatrix>
-  Mat(const Eigen::Ref<__EigenMatrix> mat) :
+  explicit Mat(const Eigen::Ref<__EigenMatrix> mat) :
       Mat<typename __EigenMatrix::Scalar>(mat.rows(), mat.cols())
   {
     memcpy( this->data(), mat.data(), mat.rows() * mat.cols()
@@ -748,7 +748,8 @@ class Struct
     setData();
   }
 
-  Struct(const std::vector<std::string>& field_names, int rows=1, int cols=1) :
+  template <class Container>
+  Struct(const Container& field_names, int rows=1, int cols=1) :
       owns_(true)
   {
     const size_t nfields = field_names.size();
