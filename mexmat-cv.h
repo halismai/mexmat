@@ -43,12 +43,8 @@ mex::Mat<T> cv2mex(const cv::Mat& src)
 template <typename T> inline
 cv::Mat mex2cv(const mex::Mat<T>& src)
 {
-  cv::Mat dst(src.rows(), src.cols(), cv::DataType<T>::type);
-
   cv::Mat _src(src.cols(), src.rows(), cv::DataType<T>::type, (void*) src.data());
-  cv::transpose(_src, dst);
-
-  return dst;
+  return _src.t();
 }
 
 inline mxArray* cv2mexarray(const cv::Mat& src)
