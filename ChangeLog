@@ -1,7 +1,12 @@
+2016-04-20 Hatem Alismail <halismai@cs.cmu.edu>
+	* Better c++11 support
+	* Fix bug with n-dimensional array indexing
+
 2014-12-13 Hatem Alismail <halismai@cs.cmu.edu>
   * Initial release
 
 
-Copyright 2013, 2014
+Copyright 2013-2016
 Copying and distribution of this file, with or without modification, are
 permitted provided the copyright notice and this notice are preserved.
+
