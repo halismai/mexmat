@@ -147,7 +147,7 @@ public:
  static const mxClassID type         = mxUNKNOWN_CLASS;
  static const mxComplexity complex_t = mxCOMPLEX;
  static const mxComplexity real_t    = mxREAL;
- static std::string string() { return "unkown"; }
+ static std::string string() { return "unknown"; }
 }; // traits_
 
 template<> class traits_<bool> {

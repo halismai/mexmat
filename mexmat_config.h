@@ -19,6 +19,7 @@
 #define MATLAB_UTILS_MEXMAT_CONFIG_H
 
 #include <mex.h>
+#include <string.h>
 
 #if defined(MEXMAT_WITH_EIGEN)
 #include <Eigen/Dense>
