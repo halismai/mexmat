@@ -1072,11 +1072,15 @@ template <int, int> class MatlabInputFixedRange;
 class MatlabInput
 {
  public:
-  explicit MatlabInput(int nrhs, mxArray const* prhs[]);
+  explicit MatlabInput(int nrhs, mxArray const* prhs[])
+      : _nrhs(nrhs), _prhs(prhs) {}
 
   inline int size() const { return _nrhs; }
 
-  inline mxArray const* get(int i) const;
+  inline mxArray const* get(int i) const {
+    valid_index_or_error(i);
+    return _prhs[i];
+  }
 
   template <class Mat> inline
   const Mat get(int i) const { return Mat(get(i)); }
@@ -1101,7 +1105,10 @@ class MatlabInput
   mxArray const** _prhs;
 
  private:
-  inline void valid_index_or_error(int) const;
+  inline void valid_index_or_error(int) const {
+    if(i < 0 || i >= size())
+      mexError("index '%d' is out of ouf bound [%d]\n", i, size());
+  }
 }; // MatlabInputFixed
 
 template <int N>
@@ -1155,7 +1162,8 @@ template <int, int> class MatlabOutputFixedRange;
 class MatlabOutput
 {
  public:
-  explicit MatlabOutput(int nlhs, mxArray* plhs[]);
+  explicit MatlabOutput(int nlhs, mxArray* plhs[]) :
+      _nlhs(nlhs), _plhs(plhs) {}
 
   inline int size() const { return _nlhs; }
 
@@ -1164,7 +1172,10 @@ class MatlabOutput
   template <class Mat> inline
   void set(int i, Mat&& m) { set(i, m.release()); }
 
-  void set(int i, mxArray* p);
+  inline void set(int i, mxArray* p) {
+    valid_index_or_error(i);
+    _plhs[i] = p;
+  }
 
   template <int N> inline void set(mxArray* out) { set(N, out); }
   template <int N, class Mat> inline void set(Mat&& m) { set(N, m); }
@@ -1178,7 +1189,10 @@ class MatlabOutput
   mxArray** _plhs;
 
  private:
-  inline void valid_index_or_error(int) const;
+  inline void valid_index_or_error(int i) const {
+    if(i < 0 || i >= size())
+    mexError("index '%d' is out of bounds [%d]\n", i, size());
+  }
 }; //  MatlabOutput
 
 template <int N>
