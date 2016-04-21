@@ -1115,6 +1115,18 @@ class MatlabInputFixed : public MatlabInput
                (!usage.empty() ? std::string("\nUSAGE: " + usage).c_str() : ""));
     }
   }
+
+  template <int Index, class Mat> inline
+  const Mat get() const {
+    static_assert(Index >= 0 && Index < N, "Index out of bounds");
+    return MatlabInput::get<Index, Mat>();
+  }
+
+  template <int Index> inline
+  mxArray const* get() const {
+    static_assert(Index >= 0 && Index < N, "Index out of bounds");
+    return MatlabInput::get<Index>();
+  }
 }; // MatlabInputFixed
 
 template <int N_min, int N_max>
