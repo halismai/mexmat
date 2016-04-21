@@ -667,6 +667,8 @@ class Cell {
   // move
   Cell(Cell&& c) : mx_ptr_(c.mx_ptr_), owns_(c.owns_) { c.owns_=false; }
 
+  Cell(const Cell& c) : mx_ptr_(mxDuplicateArray(c.mx_ptr_)), owns_(true) {}
+
   inline const mxArray* operator()(mwIndex i, mwIndex j) const {
     mwIndex a[] = {i,j};
     return mxGetCell(mx_ptr_, mxCalcSingleSubscript(mx_ptr_, 2, a));
