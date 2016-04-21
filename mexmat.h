@@ -1227,6 +1227,8 @@ class MatlabOutput
 template <int N>
 class MatlabOutputFixed : public MatlabOutput
 {
+  static_assert( N >= 0, "invalid output size" );
+
  public:
   explicit inline MatlabOutputFixed(int nlhs, mxArray* plhs[],
                                     std::string usage = "")
@@ -1236,12 +1238,25 @@ class MatlabOutputFixed : public MatlabOutput
       mexError("expected %d outputs [got %d] %s\n", N, nlhs,
                (!usage.empty() ? std::string("\nUSAGE: " + usage).c_str() : ""));
   }
+
+  template <int Index> inline
+  void set(mxArray* out) {
+    static_assert( Index >= 0 && Index < N, "index out of bounds" );
+    MatlabOutput::set<Index>(out);
+  }
+
+  template <int Index, class Mat> inline
+  void set(Mat&& m) {
+    static_assert( Index >= 0 && Index < N, "index out of bounds" );
+    MatlabOutput::set<Index, Mat>(m);
+  }
+
 }; // MatlabOutput
 
 template <int N_min, int N_max>
 class MatlabOutputFixedRange : public MatlabOutput
 {
-  static_assert( N_min <= N_max, "bad range" );
+  static_assert( N_min >= 0 && N_min <= N_max, "bad range" );
 
  public:
   explicit inline MatlabOutputFixedRange(int nlhs, mxArray* plhs[],
@@ -1253,9 +1268,19 @@ class MatlabOutputFixedRange : public MatlabOutput
                N_min, N_max, nlhs,
                (!usage.empty() ? (std::string("\nUSAGE: " + usage).c_str()) : ""));
   }
+
+  template <int Index> inline
+  void set(mxArray* out) {
+    static_assert( Index >= N_min && Index < N_max, "index out of bounds" );
+    MatlabOutput::set<Index>(out);
+  }
+
+  template <int Index, class Mat> inline
+  void set(Mat&& m) {
+    static_assert( Index >= N_min && Index < N_max, "index out of bounds" );
+    MatlabOutput::set<Index, Mat>(m);
+  }
 }; // MatlabOutputFixedRange
-
-
 
 }; // mex
 
