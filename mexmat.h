@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <map>
 #include <type_traits>
+#include <initializer_list>
 
 namespace mex {
 
@@ -758,6 +759,22 @@ class Struct
     const char* names[nfields];
     for(size_t i = 0; i < nfields; ++i)
       names[i] = field_names[i].c_str();
+
+    mx_ptr_ = mxCreateStructMatrix(rows, cols, nfields, names);
+    setData();
+  }
+
+  Struct(std::initializer_list<std::string> field_names, int rows = 1, int cols = 1)
+      : owns_(true)
+  {
+    const auto nfields = field_names.size();
+
+    const char* names[nfields];
+    {
+      int i = 0;
+      for(const auto& fname : field_names)
+        names[i++] = fname.c_str();
+    }
 
     mx_ptr_ = mxCreateStructMatrix(rows, cols, nfields, names);
     setData();
