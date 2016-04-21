@@ -1105,7 +1105,7 @@ class MatlabInput
   mxArray const** _prhs;
 
  private:
-  inline void valid_index_or_error(int) const {
+  inline void valid_index_or_error(int i) const {
     if(i < 0 || i >= size())
       mexError("index '%d' is out of ouf bound [%d]\n", i, size());
   }
@@ -1141,7 +1141,7 @@ class MatlabInputFixed : public MatlabInput
 template <int N_min, int N_max>
 class MatlabInputFixedRange : public MatlabInput
 {
-  static_assert( N_min <= N_max, "bad range" );
+  static_assert( N_min <= N_max && N_min >= 0, "bad range" );
 
  public:
   explicit inline MatlabInputFixedRange(int nrhs, mxArray const* prhs[],
@@ -1152,6 +1152,18 @@ class MatlabInputFixedRange : public MatlabInput
       mexError("expected input to be between %d and %d, but got %d %s\n",
                N_min, N_max, nrhs,
                (!usage.empty() ? (std::string("\nUSAGE: " + usage).c_str()) : ""));
+  }
+
+  template <int Index, class Mat> inline
+  const Mat get() const {
+    static_assert(Index >= N_min && Index < N_max, "index out of bounds");
+    return MatlabInput::get<Index, Mat>();
+  }
+
+  template <int Index> inline
+  mxArray const* get() const {
+    static_assert(Index >= N_min && Index < N_max, "index out of bounds");
+    return MatlabInput::get<Index>();
   }
 
 }; // MatlabInputFixedRange
