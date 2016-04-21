@@ -72,9 +72,9 @@ template <> void make_random3<float>(mex::Mat<float>& M, mwSize length)
 }
 
 double get_double(const mxArray *array_ptr)
-{ 	
+{
 	double   *pr;
-  	mwSize result; 
+  	mwSize result;
 	pr = (double *)mxGetData(array_ptr);
 	result = mxGetNumberOfElements(array_ptr);
 	static const char* USAGE = "rows and columns must be valid scalars";
@@ -82,34 +82,34 @@ double get_double(const mxArray *array_ptr)
 	return (*pr);
 }
 
-/* Display the subscript associated with the given index. */ 
+/* Display the subscript associated with the given index. */
 void display_subscript(const mxArray *array_ptr, mwSize index)
 {
-	mwSize     inner, subindex, total, d, q, number_of_dimensions; 
+	mwSize     inner, subindex, total, d, q, number_of_dimensions;
 	mwSize       *subscript;
 	const mwSize *dims;
 
 	number_of_dimensions = mxGetNumberOfDimensions(array_ptr);
 	subscript = (mwSize*)mxCalloc(number_of_dimensions, sizeof(mwSize));
-	dims = mxGetDimensions(array_ptr); 
+	dims = mxGetDimensions(array_ptr);
 
 	mexPrintf("(");
 	subindex = index;
-	for (d = number_of_dimensions-1; ; d--) 
+	for (d = number_of_dimensions-1; ; d--)
 	{ /* loop termination is at the end */
-		for (total=1, inner=0; inner<d; inner++)  
-			total *= dims[inner]; 
+		for (total=1, inner=0; inner<d; inner++)
+			total *= dims[inner];
 
 		subscript[d] = subindex / total;
 		subindex = subindex % total;
-		
-		if (d == 0) 
+
+		if (d == 0)
 		{
 			break;
 		}
 	}
 
-	for (q=0; q<number_of_dimensions-1; q++) 
+	for (q=0; q<number_of_dimensions-1; q++)
 	{
 		mexPrintf("%d,", subscript[q] + 1);
 	}
@@ -121,20 +121,20 @@ template <typename _T> void test_getdata(int nlhs, mxArray* plhs[], int nrhs, mx
 {
 	static const char* USAGE = "output = fn('test_getdata,data)";
  	mex::nargchk(2,2, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
-	
+	mex::nargchk(0,0, nlhs, USAGE);
+
 	double   *pr;
-  	mwSize result, index; 
+  	mwSize result, index;
 	pr = (_T*)mex::getData(prhs[1]);
 	result = mxGetNumberOfElements(prhs[1]);
 
-	for (index=0; index<mwSize(result); index++)  
+	for (index=0; index<mwSize(result); index++)
 	{
 		mexPrintf("\t");
 		display_subscript(prhs[1], index);
 		mexPrintf(" = %f\n", *pr++);
 	}
-	
+
 	mexPrintf("\nData Retreival (getData) test completed.\n");
 }
 
@@ -142,8 +142,8 @@ void test_mat_element_no(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prh
 {
 	static const char* USAGE = "fn('test_mat_element_no',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
- 	mex::nargchk(0,0, nlhs, USAGE); 
- 	
+ 	mex::nargchk(0,0, nlhs, USAGE);
+
 	mwSize result=mex::numel(prhs[1]);
 	mexPrintf("\nTotal number of elements in given array equal %d. Test completed.\n", result);
 }
@@ -152,8 +152,8 @@ void test_mat_row_no(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "fn('test_mat_row_no',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
- 	mex::nargchk(0,0, nlhs, USAGE); 
- 	
+ 	mex::nargchk(0,0, nlhs, USAGE);
+
 	mwSize result=mex::rows(prhs[1]);
 	mexPrintf("\nTotal number of rows in given matrix equal %d. Test completed.\n", result);
 }
@@ -162,8 +162,8 @@ void test_mat_col_no(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "fn('test_mat_col_no',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
- 	mex::nargchk(0,0, nlhs, USAGE); 
- 	
+ 	mex::nargchk(0,0, nlhs, USAGE);
+
 	mwSize result=mex::cols(prhs[1]);
 	mexPrintf("\nTotal number of columns in given matrix equal %d. Test completed.\n", result);
 }
@@ -173,17 +173,17 @@ void test_mat_dim_no(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_mat_dim_no',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	mwSize result=mex::ndims(prhs[1]);
 	mexPrintf("\nTotal number of dimensions for given matrix equal %d. Test completed.\n", result);
 }
 
 void test_mat_dims(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
-{	
+{
 	static const char* USAGE = "fn('test_mat_dims',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	const mwSize  *dims;
 	dims=mex::dims(prhs[1]);
 	mwSize result=mex::ndims(prhs[1]);
@@ -215,13 +215,13 @@ void test_mat_dims_params(int nlhs, mxArray* plhs[], int nrhs, mxArray const* pr
     		temp[i] = dist(rng);
 	}
 
-	
+
 	mwSize result=mex::ndims(temp);
 	mexPrintf("\nTotal number of dimensions for given matrix equal %d.\n", result);
 
 	mexPrintf("Dimension %d has %d elements.\n",1,mex::dim<0>(temp));
 	mexPrintf("Dimension %d has %d elements.\n",2,mex::dim<1>(temp));
-	
+
 	mexPrintf("Test completed.\n");
 }
 
@@ -230,7 +230,7 @@ void test_length(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_length',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
-	
+
 	mwSize result=mex::length(prhs[1]);
 	mexPrintf("\nLength of given input equals %d. Test completed.\n", result);
 }
@@ -240,7 +240,7 @@ void test_isReal(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[]) //r
 	static const char* USAGE = "fn('test_isReal',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isReal(prhs[1]);
 	if (result == true)
@@ -258,7 +258,7 @@ void test_isComplex(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isComplex',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isComplex(prhs[1]);
 	if (result == true)
@@ -277,7 +277,7 @@ void test_isLogical(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
 	bool result=false;
-	
+
 	result=mex::isLogical(prhs[1]);
 	if (result == true)
 	{
@@ -294,7 +294,7 @@ void test_isChar(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isChar',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isChar(prhs[1]);
 	if (result == true)
@@ -312,7 +312,7 @@ void test_isDouble(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isDouble',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isDouble(prhs[1]);
 	if (result == true)
@@ -330,7 +330,7 @@ void test_isSingle(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isSingle',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isSingle(prhs[1]);
 	if (result == true)
@@ -348,7 +348,7 @@ void test_isNumeric(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isNumeric',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isNumeric(prhs[1]);
 	if (result == true)
@@ -366,7 +366,7 @@ void test_isNumber(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isNumber',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isNumber(prhs[1]);
 	if (result == true)
@@ -377,7 +377,7 @@ void test_isNumber(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in form of number format.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isCell(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -394,7 +394,7 @@ void test_isCell(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in form of cell format.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isStruct(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -402,7 +402,7 @@ void test_isStruct(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isStruct',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isStruct(prhs[1]);
 	if (result == true)
@@ -413,7 +413,7 @@ void test_isStruct(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in form of Struture format.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isOpaque(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -421,7 +421,7 @@ void test_isOpaque(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isOpaque',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isOpaque(prhs[1]);
 
@@ -433,7 +433,7 @@ void test_isOpaque(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in the form of Opaque format.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isClass(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -441,7 +441,7 @@ void test_isClass(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isClass',data, 'DATATYPE')";
  	mex::nargchk(3,3, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
  	std::string name=mex::getString( prhs[2] );
 	bool result=false;
 	result=mex::isClass(prhs[1],name);
@@ -453,7 +453,7 @@ void test_isClass(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not of type %s.\n",name.c_str());
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isFnHandle(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -461,7 +461,7 @@ void test_isFnHandle(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isFnHandle',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isFnHandle(prhs[1]);
 	if (result == true)
@@ -471,7 +471,7 @@ void test_isFnHandle(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	{
 		mexPrintf("\nThe input is not in form of function handle format.\n");
 	}
-	mexPrintf("Test completed.\n");	
+	mexPrintf("Test completed.\n");
 }
 
 void test_isFloatingPoint(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -479,7 +479,7 @@ void test_isFloatingPoint(int nlhs, mxArray* plhs[], int nrhs, mxArray const* pr
 	static const char* USAGE = "fn('test_isFloatingPoint',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isFloatingPoint(prhs[1]);
 	if (result == true)
@@ -490,7 +490,7 @@ void test_isFloatingPoint(int nlhs, mxArray* plhs[], int nrhs, mxArray const* pr
 		mexPrintf("\nThe input is not in form of floating point data.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isVector(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -498,7 +498,7 @@ void test_isVector(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isVector',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isVector(prhs[1]);
 	if (result == true)
@@ -509,7 +509,7 @@ void test_isVector(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in form of Vector data.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 void test_isScalar(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -517,7 +517,7 @@ void test_isScalar(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 	static const char* USAGE = "fn('test_isScalar',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
 	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
 	bool result=false;
 	result=mex::isScalar(prhs[1]);
 	if (result == true)
@@ -528,7 +528,7 @@ void test_isScalar(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 		mexPrintf("\nThe input is not in form of Scalar data.\n");
 	}
 	mexPrintf("Test completed.\n");
-	
+
 }
 
 template <typename _T> void test_copy_ctor(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -536,7 +536,7 @@ template <typename _T> void test_copy_ctor(int nlhs, mxArray* plhs[], int nrhs, 
  	static const char* USAGE = "output = fn('test_copy_ctor',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
  	mex::nargchk(1,1, nlhs, USAGE);
- 	 
+
  	const mex::Mat<_T> input(prhs[1]);
 	// return a copy of input
   	mex::Mat<_T> output(input);
@@ -549,7 +549,7 @@ template <typename _T> void test_move_ctor(int nlhs, mxArray* plhs[], int nrhs, 
  	static const char* USAGE = "output = fn('test_move_ctor',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
  	mex::nargchk(1,1, nlhs, USAGE);
- 	 
+
  	mex::Mat<_T> input(prhs[1]);
 	// return a copy of input
   	mex::Mat<_T> output(std::move(input));
@@ -563,7 +563,7 @@ template <typename _T> void test_eigen_lin_solver(int nlhs, mxArray* plhs[], int
   	static const char* USAGE = "output = fn('test_eigen_lin_solver',A_matrix,b_vector)";
  	mex::nargchk(3,3, nrhs, USAGE);
  	mex::nargchk(1,1, nlhs, USAGE);
- 	
+
 	const mex::Mat<_T> A(prhs[1]);
 	const mex::Mat<_T> b(prhs[2]);
 
@@ -580,7 +580,7 @@ template <typename _T> void test_eigen_lin_solver(int nlhs, mxArray* plhs[], int
 
 	mex::Mat<_T> ret(x);
 	plhs[0] = ret.release();
-	mexPrintf("\nEigen matrix based linear solver test completed. Solution is returned.\n");	
+	mexPrintf("\nEigen matrix based linear solver test completed. Solution is returned.\n");
 }
 
 template <typename _T> void test_ndims_init(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -598,9 +598,9 @@ template <typename _T> void test_ndims_init(int nlhs, mxArray* plhs[], int nrhs,
  	}
 
  	mex::Mat<_T> input(ndims,*dims);
- 	 	
+
 	plhs[0]=input.release();
-	mexPrintf("\nMulti-dimensional initialization operator for nD matrix is not defined though its defined for 2D matrix access i.e. Mat(i,j).\nnD matrix declaration test completed."); 	
+	mexPrintf("\nMulti-dimensional initialization operator for nD matrix is not defined though its defined for 2D matrix access i.e. Mat(i,j).\nnD matrix declaration test completed.");
 }
 
 void test_destroyArray(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
@@ -608,14 +608,14 @@ void test_destroyArray(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[
  	static const char* USAGE = "output = fn('test_destroyArray')";
  	mex::nargchk(1,1, nrhs, USAGE);
  	mex::nargchk(0,0, nlhs, USAGE);
- 	
+
  	mwSize rows=3;
 	mwSize cols=4;
 	// expecting a _T class
 	mex::Mat<double> temp(rows,cols);
-	
+
 	make_random(temp);
-	
+
 	mexPrintf("3 x 4 Matrix initialized.\n");
 	mxArray* array_ref;
 	array_ref=temp.release();
@@ -629,12 +629,12 @@ template <typename _T> void test_col_init(int nlhs, mxArray* plhs[], int nrhs, m
  	static const char* USAGE = "output = fn('test_col_init',data)";
  	mex::nargchk(2,2, nrhs, USAGE);
  	mex::nargchk(1,1, nlhs, USAGE);
- 	
+
  	if (mex::isVector(prhs[1]) )
  	{
 		mex::Mat<_T> input(prhs[1]);
  		std::vector<_T> vect(input.rows());
- 		for(mwSize i=0; i<input.rows(); ++i) 
+ 		for(mwSize i=0; i<input.rows(); ++i)
 		{
 			for(mwSize j=0; j<input.cols(); ++j)
 			{
@@ -648,24 +648,24 @@ template <typename _T> void test_col_init(int nlhs, mxArray* plhs[], int nrhs, m
 	}else
 	{
 		mexPrintf("\nVector init constructor test not completed. Please provide a column vector.\n");
-	}	
+	}
 }
 
 void test_cell_init(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "output = fn('test_cell_init',double matrix,double matrix,double matrix)";
  	mex::nargchk(4,4, nrhs, USAGE);
-	mex::nargchk(1,1, nlhs, USAGE); 
-	
+	mex::nargchk(1,1, nlhs, USAGE);
+
 	// via the class warpper
 	mex::Cell C((mwSize)(nrhs-1),1);
 
 	C.set( 0, mxDuplicateArray(prhs[1]) );
         C.set( 1, mxDuplicateArray(prhs[2]) );
         C.set( 2, mxDuplicateArray(prhs[3]) );
-      	
+
 	plhs[0]=C.release();
-	
+
 	mexPrintf("\nCell initilalization test completed.\n");
 	//mxFree(C);
 }
@@ -674,21 +674,21 @@ void test_cell_init_mov(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs
 {
 	static const char* USAGE = "output = fn('test_cell_init_mov')";
  	mex::nargchk(1,1, nrhs, USAGE);
-	mex::nargchk(1,1, nlhs, USAGE); 
-	
+	mex::nargchk(1,1, nlhs, USAGE);
+
 	// via the class warpper
 	mwSize rows=3, cols=4;
 	mex::Cell C(rows,cols);
-	
+
 	for (mwSize i=0;i<rows*cols;i++)
 	{
 		C.set(i,mex::newMexMatrix(2,2));
 	}
-	
+
 	mex::Cell D(std::move(C));
 
 	plhs[0]=D.release();
-	
+
 	mexPrintf("\nCell initilalization using move-constructor test completed.\n");
 }
 
@@ -717,16 +717,16 @@ template <typename _T> void test_init3d_ctor(int nlhs, mxArray* plhs[], int nrhs
 	//mexPrintf("\n%d\n",nrhs);
 	static const char* USAGE = "output = fn('test_rand3d_DATATYPE',dim#1,dim#2,dim#3)";
  	mex::nargchk(4,4, nrhs, USAGE);
-	mex::nargchk(1,1, nlhs, USAGE); 
-	 
+	mex::nargchk(1,1, nlhs, USAGE);
+
 	mwSize dim1=get_double(prhs[1]);
 	mwSize dim2=get_double(prhs[2]);
 	mwSize dim3=get_double(prhs[3]);
-	
+
 	// expecting a _T class
 	mex::Mat<_T> temp(dim1,dim2,dim3);
-	
-	for(mwSize i=0; i<dim1; i++) 
+
+	for(mwSize i=0; i<dim1; i++)
 	{
 		for(mwSize j=0; j<dim2; j++)
 		{
@@ -736,7 +736,7 @@ template <typename _T> void test_init3d_ctor(int nlhs, mxArray* plhs[], int nrhs
 			}
 		}
 	}
-			
+
 	plhs[0]=temp.release();
 	mexPrintf("\nMat(i,j,k) initialization operator used.\n3D matrix declaration test completed.");
 }
@@ -746,12 +746,12 @@ void test_init_RGBimage(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs
 	//mexPrintf("\n%d\n",nrhs);
 	static const char* USAGE = "output = fn('test_init_RGBimage',RGB_Image)";
  	mex::nargchk(2,2, nrhs, USAGE);
-	mex::nargchk(1,1, nlhs, USAGE); 
-	 
+	mex::nargchk(1,1, nlhs, USAGE);
+
 	mex::Mat<double> input(prhs[1]);
-	mex::Mat<double> Img(input.rows(),input.cols(),input.depth());	
-	
-	for(mwSize i=0; i<input.rows(); i++) 
+	mex::Mat<double> Img(input.rows(),input.cols(),input.depth());
+
+	for(mwSize i=0; i<input.rows(); i++)
 	{
 		for(mwSize j=0; j<input.cols(); j++)
 		{
@@ -761,7 +761,7 @@ void test_init_RGBimage(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs
 			}
 		}
 	}
-			
+
 	plhs[0]=Img.release();
 	mexPrintf("\nRGB Image based matrix initialization complete.\n3D matrix based Image initialization test completed.");
 }
@@ -770,7 +770,7 @@ void test_error_msg(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "fn('test_error_msg')";
  	mex::nargchk(1,1, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
+	mex::nargchk(0,0, nlhs, USAGE);
   	mex::error("Error message function successfully tested");
 }
 
@@ -778,7 +778,7 @@ void test_warning_msg(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[]
 {
 	static const char* USAGE = "fn('test_warning_msg')";
  	mex::nargchk(1,1, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
+	mex::nargchk(0,0, nlhs, USAGE);
   	mex::warning("Warning message function successfully tested");
 }
 
@@ -786,8 +786,8 @@ void test_printf(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "fn('test_printf', 'STRING',INTEGER, DOUBLE)";
  	mex::nargchk(4,4, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
-	 	
+	mex::nargchk(0,0, nlhs, USAGE);
+
     	std::string str2= mex::getString(prhs[1]);
   	int var1=get_double(prhs[2]);
   	double var2=get_double(prhs[3]);
@@ -800,8 +800,8 @@ void test_massert(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
   	static const char* USAGE = "fn('test_massert')";
 	mex::nargchk(1,1, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
-		
+	mex::nargchk(0,0, nlhs, USAGE);
+
 	int large=10;
 	int small=2;
 	double equal1= 5.0;
@@ -816,42 +816,42 @@ void test_massert(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 
 void test_nargchk_1arg(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
-	  static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";  
-	  static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";  
-	  
-	  mex::nargchk(1,1,nlhs,USAGE_LHS); 
+	  static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";
+	  static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";
+
+	  mex::nargchk(1,1,nlhs,USAGE_LHS);
 	  mex::nargchk(1,1,nrhs,USAGE_RHS);
-	  
+
 	  mexPrintf("\nArgument check completed\n");
-	  
+
 	  mex::Mat<double> temp(1,1);
 	  temp(0,0)=0;
-	  
+
 	  plhs[0]=temp.release();
 }
 
 void test_nargchk_5arg(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
-	  static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";  
-	  static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";  
-	  
-	  mex::nargchk(5,5,nlhs,USAGE_LHS); 
+	  static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";
+	  static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";
+
+	  mex::nargchk(5,5,nlhs,USAGE_LHS);
 	  mex::nargchk(5,5,nrhs,USAGE_RHS);
 	  mexPrintf("\nArgument check completed\n");
-	  
+
 	  mex::Mat<double> temp(1,1);
 	  temp(0,0)=0;
-	  
+
 	  for(int i=0;i<5;i++)
 	  	plhs[i]=temp.release();
 }
 
 void test_nargchk_0to3arg(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
-	static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";  
-	static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";  
+	static const char* USAGE_LHS = "Left hand side arguments either less or more than required number";
+	static const char* USAGE_RHS = "Right hand side arguments either less or more than required number";
 
-	mex::nargchk(0,3,nlhs,USAGE_LHS); 
+	mex::nargchk(0,3,nlhs,USAGE_LHS);
 	mex::nargchk(0,3,nrhs,USAGE_RHS);
 	mexPrintf("\nArgument check completed\n");
 
@@ -871,7 +871,7 @@ void test_getString(int nlhs, mxArray* plhs[], int nrhs, mxArray const* prhs[])
 {
 	static const char* USAGE = "fn('test_getString, 'STRING')";
 	mex::nargchk(2,2, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
+	mex::nargchk(0,0, nlhs, USAGE);
 	const std::string command = mex::getString( prhs[1] );
         mexPrintf("\nThe input string sent via command line is \"%s\". Test completed\n", command.c_str());
 }
@@ -880,7 +880,7 @@ template <typename _T> void test_malloc(int nlhs, mxArray* plhs[], int nrhs, mxA
 {
 	static const char* USAGE = "fn('test_malloc_DATATYPE, SIZEOFBUFFER)";
 	mex::nargchk(2,2, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
+	mex::nargchk(0,0, nlhs, USAGE);
 
 	mwSize size_of_buffer=get_double(prhs[1]);
 	_T* buf = mex::malloc<_T>(size_of_buffer);
@@ -899,8 +899,8 @@ template <typename _T> void test_free(int nlhs, mxArray* plhs[], int nrhs, mxArr
 {
 	static const char* USAGE = "fn('test_free_DATATYPE)";
 	mex::nargchk(1,1, nrhs, USAGE);
-	mex::nargchk(0,0, nlhs, USAGE); 
-	
+	mex::nargchk(0,0, nlhs, USAGE);
+
 	mwSize size_of_buffer=4;
 	_T* buf = mex::malloc<_T>(size_of_buffer);
 
@@ -911,23 +911,23 @@ template <typename _T> void test_free(int nlhs, mxArray* plhs[], int nrhs, mxArr
 	{
 	  	mexPrintf("\nMemory allocation action failed\n");
 	}
-  	
+
   	mex::free<_T>(buf);
-	mexPrintf("\nObject freed successfully. Test Completed\n"); 
+	mexPrintf("\nObject freed successfully. Test Completed\n");
 }
 
 void mexFunction(int nlhs, mxArray* plhs[],
                  int nrhs, mxArray const* prhs[])
-{ 
+{
 	// first argument is a string of the command to perform
-	if(nrhs < 1) 
+	if(nrhs < 1)
 	{
 		mex::error("must have at least one argument");
 	}
 
 	const std::string command = mex::getString( prhs[0] );
 	mexPrintf("\n-------------------------------------------\n");
-	
+
 	if ("test_init_RGBimage" == command)
 	{
 		test_init_RGBimage(nlhs, plhs, nrhs, prhs);
@@ -943,10 +943,6 @@ void mexFunction(int nlhs, mxArray* plhs[],
 	else if ("test_eigen_double" == command)
 	{
 		test_eigen_lin_solver<double>(nlhs, plhs, nrhs, prhs);
-	}
-	else if ("test_eigen_int" == command)
-	{
-		test_eigen_lin_solver<int>(nlhs, plhs, nrhs, prhs);
 	}
 	else if("test_rand_int" == command)
 	{
@@ -983,7 +979,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 	else if("test_ndims_float" == command)
 	{
 		test_ndims_init<float>(nlhs, plhs, nrhs, prhs);
-	}        
+	}
 	else if("test_col_double" == command)
 	{
 		test_col_init<double>(nlhs, plhs, nrhs, prhs);
@@ -1003,7 +999,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 	}else if("test_copy_ctor" == command)
 	{
 		test_copy_ctor<double>(nlhs, plhs, nrhs, prhs);
-	} 
+	}
 	else if("test_move_ctor" == command)
 	{
 		test_move_ctor<double>(nlhs, plhs, nrhs, prhs);
@@ -1156,7 +1152,7 @@ void mexFunction(int nlhs, mxArray* plhs[],
 	{
 		test_isFnHandle(nlhs, plhs, nrhs, prhs);
 	}
-	else 
+	else
 	{
 		std::stringstream msg;
 		msg << "unknown command '" << command << "'\n";
