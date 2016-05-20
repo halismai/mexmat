@@ -829,6 +829,12 @@ class Struct
     return *this;
   }
 
+  inline Struct& set(const std::string& fname, const std::string& fval, mwIndex ind = 0)
+  {
+    mxSetField(mx_ptr_, ind, fname.c_str(), createString(fval));
+    return *this;
+  }
+
   template <typename T>
   inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwIndex ind =0)
   {
@@ -1194,6 +1200,8 @@ class MatlabOutput
   explicit MatlabOutput(int nlhs, mxArray* plhs[]) :
       _nlhs(nlhs), _plhs(plhs) {}
 
+  virtual ~MatlabOutput() {}
+
   inline int size() const { return _nlhs; }
 
   // set output at 'i'
@@ -1250,7 +1258,6 @@ class MatlabOutputFixed : public MatlabOutput
     static_assert( Index >= 0 && Index < N, "index out of bounds" );
     MatlabOutput::set<Index, Mat>(m);
   }
-
 }; // MatlabOutput
 
 template <int N_min, int N_max>
