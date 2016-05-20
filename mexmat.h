@@ -829,10 +829,9 @@ class Struct
     return *this;
   }
 
-  inline Struct& set(const std::string& fname, const std::string& fval, mwIndex ind = 0)
+  inline Struct& set(const std::string& fname, mex::Struct& s, mwIndex ind = 0)
   {
-    mxSetField(mx_ptr_, ind, fname.c_str(), createString(fval));
-    return *this;
+    return set(fname, s.release(), ind);
   }
 
   template <typename T>
@@ -851,6 +850,12 @@ class Struct
   inline Struct& set(const std::string& fname, const T& value, mwIndex ind = 0)
   {
     return set(fname, valueToMxArray(value), ind);
+  }
+
+  inline Struct& set(const std::string& fname, const std::string& fval, mwIndex ind = 0)
+  {
+    mxSetField(mx_ptr_, ind, fname.c_str(), createString(fval));
+    return *this;
   }
 
   template <typename T> inline
