@@ -829,11 +829,6 @@ class Struct
     return *this;
   }
 
-  inline Struct& set(const std::string& fname, mex::Struct& s, mwIndex ind = 0)
-  {
-    return set(fname, s.release(), ind);
-  }
-
   template <typename T>
   inline Struct& set(const std::string& fname, mex::Mat<T>& m, mwIndex ind =0)
   {
