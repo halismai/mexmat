@@ -37,10 +37,10 @@ namespace mex {
 template <typename> class Mat;
 
 /** Issues an error in matlab. Will terminate the program */
-static inline void error(const std::string& msg) { mexError(msg.c_str()); }
+static inline void error(const std::string& msg) { mexError("%s", msg.c_str()); }
 
 /** Issues a warning in matlab. Does not terminate the program */
-static inline void warning(const std::string& msg) { mexWarning(msg.c_str()); }
+static inline void warning(const std::string& msg) { mexWarning("%s", msg.c_str()); }
 
 /** printf */
 static inline void printf(const char* fmt, ...) {
@@ -52,7 +52,7 @@ static inline void printf(const char* fmt, ...) {
 
 /** asserts if cond is false, the assert will issue an error in Matlab */
 static inline void massert(bool cond, const std::string& msg="") {
-  if(!cond) mexError(msg.c_str());
+  if(!cond) mexError("%s", msg.c_str());
 }
 
 #define MEXMAT_ASSERT(cond, msg) mex::massert(cond, __FILE__ ":" __LINE__  + msg)
